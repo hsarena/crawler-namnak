@@ -6,3 +6,5 @@ class NamnakItem(Item):
     title = Field()
     link = Field()
     summary = Field()
+    text = Field()
+    images = Field()

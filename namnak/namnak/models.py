@@ -26,5 +26,7 @@ class NamnakDB(DeclarativeBase):
     title = Column('title', String(250), unique=True)
     link = Column('link', String(100))
     summary = Column('summary', Text())
+    text = Column('text', Text())
+    images = Column('images', Text())
 
 
