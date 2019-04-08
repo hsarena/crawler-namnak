@@ -16,7 +16,6 @@ class SportSpider(scrapy.Spider):
               'c38-ورزش-درمانی', 'c39-گوناگون']
 
     start_urls = ['http://namnak.com/{0}'.format(group) for group in groups]
-
     custom_settings = {
         'DEPTH_LIMIT': '1',
     }
@@ -46,11 +45,11 @@ class SportSpider(scrapy.Spider):
         items = []
         path = "/tmp/namnak/sport/"
         try:
-            os.makedirs(path)
+             os.makedirs(path)
         except OSError:
-            print("Creation of the directory %s failed" % path)
+             print("Creation of the directory %s failed" % path)
         else:
-            print("Successfully created the directory %s " % path)
+             print("Successfully created the directory %s " % path)
 
         group = self.grp(response.request.url)
         articles = response.xpath('//*[@id="maintbl"]/div/div/article')
@@ -69,7 +68,6 @@ class SportSpider(scrapy.Spider):
             soup = BeautifulSoup(post.html, features="lxml")
             art = soup.find('article')
             for img in art.findAll('img'):
-                item['images'].append(img['src'])
                 jpg_name = img['src'].split('/')[-1]
                 tmp = 'http://localhost/' + jpg_name + ' ' + 'height=' + img['height'] + ' width=' + img['width']
                 img.insert_after(tmp)
@@ -77,9 +75,10 @@ class SportSpider(scrapy.Spider):
 
                 #print(tmp)
             html_str = str(soup)
-            # print(html_str)
             post.download(input_html=html_str)
             post.parse()
+            item['title'] = post.title
+            item['movies'] = post.movies
             item['text'] = post.text
             items.append(item)
 
@@ -91,3 +90,10 @@ class SportSpider(scrapy.Spider):
 
         print(items[1].text)
         return items
+            #print('Beginning file download ...')
+            #for i in item['images']:
+            #    jpg_name = i.split('/')[-1]
+            #    self.download_image(i, '{}/{}'.format(path, jpg_name))
+
+
+
