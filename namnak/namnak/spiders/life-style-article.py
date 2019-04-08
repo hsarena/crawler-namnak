@@ -77,11 +77,11 @@ class SportSpider(scrapy.Spider):
                 item['images'].append(src_str)
                 tmp = src_str + ' height= ' + img['height'] + ' width= ' + img['width']
                 img.insert_after(tmp)
-
-
-                #print(tmp)
+            for header in art.findAll('h3'):
+                for h in header.stripped_strings:
+                    tmp = ' -- Header: ' + header.text
+                header.insert_after(tmp)
             html_str = str(soup)
-            # print(html_str)
             post.download(input_html=html_str)
             post.parse()
             item['title'] = post.title
