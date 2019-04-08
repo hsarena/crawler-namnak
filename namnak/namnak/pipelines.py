@@ -20,9 +20,13 @@ class NamnakPipeline(object):
         namnakdb.group = item['group']
         namnakdb.title = item['title']
         namnakdb.summary = item['summary']
+        namnakdb.thumbnail = item['thumbnail']
         namnakdb.link = item['link']
+        namnakdb.source = item['source']
         namnakdb.text = item['text']
         namnakdb.images = item['images']
+        namnakdb.movies = item['movies']
+        namnakdb.html = item['html']
 
         try:
             session.add(namnakdb)

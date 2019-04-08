@@ -24,9 +24,13 @@ class NamnakDB(DeclarativeBase):
     category = Column('category', String(20))
     group = Column('group', String(30))
     title = Column('title', String(250), unique=True)
-    link = Column('link', String(100))
+    link = Column('link', String(200))
     summary = Column('summary', Text())
+    thumbnail = Column('thumbnail', String(200))
+    source = Column('source', String(100))
     text = Column('text', Text())
     images = Column('images', Text())
+    movies = Column('movies', Text())
+    html = Column('html', Text())
 
 
