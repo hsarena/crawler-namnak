@@ -5,6 +5,7 @@ import requests
 from namnak.items import NamnakItem
 from newspaper import Article, Config
 from bs4 import BeautifulSoup
+from scrapy import Selector
 
 
 class SportSpider(scrapy.Spider):
@@ -57,23 +58,28 @@ class SportSpider(scrapy.Spider):
             item = NamnakItem()
             item['category'] = 'ورزش و تناسب اندام'
             item['group'] = group
-            item['title'] = article.xpath('div/header/h2/a/text()').get()
+            item['thumbnail'] = article.xpath('div/span/img/@src').get()
             item['link'] = 'http://namnak.com' + article.xpath('div/header/h2/a/@href').get()
             item['summary'] = article.xpath('div/text()').get()
             url = item['link']
             post = Article(url)
             post.download()
+            item['source'] = Selector(text=post.html).xpath('//*[@id="maintbl"]/div/div/div[1]').get()
             key = "images"
             item.setdefault(key, [])
             soup = BeautifulSoup(post.html, features="lxml")
             art = soup.find('article')
+            item['html'] = art
             for img in art.findAll('img'):
                 jpg_name = img['src'].split('/')[-1]
-                tmp = 'http://localhost/' + jpg_name + ' ' + 'height=' + img['height'] + ' width=' + img['width']
+                src_str = 'http://localhost/{}'.format(jpg_name)
+                item['images'].append(src_str)
+                tmp = src_str + ' height= ' + img['height'] + ' width= ' + img['width']
                 img.insert_after(tmp)
-
-
-                #print(tmp)
+            for header in art.findAll('h3'):
+                for h in header.stripped_strings:
+                    tmp = ' -- Header: ' + header.text
+                header.insert_after(tmp)
             html_str = str(soup)
             post.download(input_html=html_str)
             post.parse()
@@ -81,14 +87,7 @@ class SportSpider(scrapy.Spider):
             item['movies'] = post.movies
             item['text'] = post.text
             items.append(item)
-
-            print('Beginning file download ...')
-            for i in item['images']:
-                jpg_name = i.split('/')[-1]
-                self.download_image(i, '{}/{}'.format(path, jpg_name))
-
-
-        print(items[1].text)
+        print(items)
         return items
             #print('Beginning file download ...')
             #for i in item['images']:
